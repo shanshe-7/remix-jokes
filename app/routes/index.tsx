@@ -1,7 +1,31 @@
+import type { LinksFunction } from "remix";
+import { Link } from "remix";
+import stylesUrl from "../styles/index.css";
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: stylesUrl,
+    },
+  ];
+};
+
 export default function Index() {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      text
+    <div className="container">
+      <div className="content">
+        <h1>
+          Remix <span>Jokes!</span>
+        </h1>
+        <nav>
+          <ul>
+            <li>
+              <Link to="jokes">Read Jokes</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 }
