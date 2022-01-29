@@ -1,7 +1,7 @@
-import { ActionFunction, LinksFunction, redirect } from "remix";
+import { ActionFunction, LinksFunction } from "remix";
 import { useActionData, json, Link, useSearchParams } from "remix";
 import { db } from "~/utils/db.server";
-import { createUserSession, login } from "~/utils/session.server";
+import { createUserSession, login, register } from "~/utils/session.server";
 import stylesUrl from "../styles/login.css";
 
 export const links: LinksFunction = () => {
@@ -63,7 +63,6 @@ export const action: ActionFunction = async ({ request }) => {
   switch (loginType) {
     case "login": {
       let user = await login({ username, password });
-      console.log(user, "user");
 
       if (!user) {
         return {
@@ -77,7 +76,6 @@ export const action: ActionFunction = async ({ request }) => {
       const userExists = await db.user?.findFirst({
         where: { username },
       });
-      console.log(userExists, "userExists");
 
       if (userExists) {
         return badRequest({
@@ -85,12 +83,8 @@ export const action: ActionFunction = async ({ request }) => {
           formError: `User with username ${username} already exists`,
         });
       }
-      // create the user
-      // create their session and redirect to /jokes
-      return badRequest({
-        fields,
-        formError: "Not implemented",
-      });
+      let user = await register({ username, password });
+      return createUserSession(user.id, redirectTo);
     }
     default: {
       return badRequest({
